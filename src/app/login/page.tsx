@@ -1,7 +1,7 @@
 "use client";
 
+import FormGroup from "@/components/form/FormGroup";
 import React from "react";
-import FormGroup from "@/components/Form/FormGroup";
 
 function page() {
   const [model, setModel] = React.useState({} as any);
