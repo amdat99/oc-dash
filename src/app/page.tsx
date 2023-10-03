@@ -1,95 +1,112 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+import React, { useState } from "react";
+
+import { ComputerDesktopIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import styles from "./page.module.css";
+import Card from "@/components/card/Card";
+import List from "@/components/list/List";
+import { badges, groups, members, posts, quests } from "./placeholderData";
+import Fields from "@/components/form/Fields";
+import ListItem from "@/components/list/ListItem";
 
 export default function Home() {
+  const [showLeftSidebarModal, setShowLeftSidebarModal] = useState(false);
+  const [showRightSidebarModal, setShowRightSidebarModal] = useState(false);
+
+  const closeSideBars = () => {
+    setShowLeftSidebarModal(false);
+    setShowRightSidebarModal(false);
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      <div className="w-100">
+        {/* small screen sidebar toggles  */}
+        <div className="d-flex justify-content-end mt-4 d-lg-none mb-2">
+          <UserGroupIcon className={styles.topIcon} onClick={() => setShowLeftSidebarModal(true)} />
+          <ComputerDesktopIcon className={styles.topIcon} />
+        </div>
+
+        {/* Top card  */}
+        <Card background="#2FB9F9" height={180} className="d-flex justify-content-center">
+          <div className="m-l-10">
+            <h1 className="text-white h3 ">News Feed</h1>
+          </div>
+        </Card>
+
+        {/*3 columns grid  */}
+        <div className="row mt-4">
+          <section className="col-3 d-none d-lg-block" id="left-sidebar-section">
+            <LeftSidebar />
+          </section>
+          <section className="col-12 col-lg-6 " id="main-feed-section">
+            <Card height={100} className="d-flex justify-content-center">
+              <div className="d-flex justify-content-between ">
+                <span className="bold text-color mt-10">All updates</span>
+                <Fields
+                  model={{ show: "all" }}
+                  field={{ name: "show", type: "select", placeholder: "show", options: [{ value: "all", label: "Everything" }] }}
+                  onChange={() => {}}
+                />
+              </div>
+            </Card>
+            {posts.map((post) => {
+              return (
+                <Card>
+                  <ListItem showHeader data={post} />
+                </Card>
+              );
+            })}
+          </section>
+          <section className="col-3 d-none d-lg-block" id="right-sidebar-section">
+            <RightSidebar />
+          </section>
         </div>
       </div>
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {/* sidebar Modals  */}
+      {showLeftSidebarModal && (
+        <>
+          <div className="modal">
+            <LeftSidebar />
+          </div>
+          <div onClick={closeSideBars} className="modal-overlay"></div>
+        </>
+      )}
+      {showRightSidebarModal && (
+        <>
+          <div className="modal">
+            <RightSidebar />
+          </div>
+          <div onClick={closeSideBars} className="modal-overlay"></div>
+        </>
+      )}
     </main>
-  )
+  );
 }
+
+const LeftSidebar = () => {
+  return (
+    <>
+      <Card>
+        <List listData={members} title="Newest members" topTextSize="15px" />
+      </Card>
+      <Card>
+        <List listData={quests} title="Quests" topTextSize="15px" />
+      </Card>
+    </>
+  );
+};
+
+const RightSidebar = () => {
+  return (
+    <>
+      <Card>
+        <List listData={groups} title="Popular groups" topTextSize="15px" />
+      </Card>
+      <Card>
+        <List listData={badges} title="Badges" topTextSize="15px" />
+      </Card>
+    </>
+  );
+};
